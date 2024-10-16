@@ -1,0 +1,6 @@
+@TravelatorBackend_HostAddress = http://localhost:5033
+
+GET {{TravelatorBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
