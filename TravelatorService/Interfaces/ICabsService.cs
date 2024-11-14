@@ -10,5 +10,7 @@ namespace TravelatorService.Interfaces
     public interface ICabsService
     {
         Task<bool> RequestBooking(CabBookingDTO booking);
+        Task<bool> ApproveBooking(CabBookingDTO booking);
+        Task<object> GetCabDetails(Guid EmployeeId);
     }
 }

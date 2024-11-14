@@ -14,6 +14,7 @@ namespace TravelatorService.Mapper
         public MappingProfiles() 
         {
             CreateMap<CabBookingDTO, CabRequest>();
+            CreateMap<CabBookingDTO, CabBooking>();
             CreateMap<TravelRequestDTO, TravelRequest>();
             CreateMap<ExpenseDTO, Expense>();
         }

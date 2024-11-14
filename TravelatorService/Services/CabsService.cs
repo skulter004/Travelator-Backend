@@ -34,5 +34,32 @@ namespace TravelatorService.Services
                 return false;
             }
         }
+        public async Task<bool> ApproveBooking(CabBookingDTO booking)
+        {
+            try
+            {
+                var cabBooking = _mapper.Map<CabBooking>(booking);
+
+                return await _cabsRepo.ApproveBooking(cabBooking);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing booking: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<object> GetCabDetails(Guid EmployeeId)
+        {
+            try
+            {
+
+                return await _cabsRepo.GetCabDetails(EmployeeId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing booking: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

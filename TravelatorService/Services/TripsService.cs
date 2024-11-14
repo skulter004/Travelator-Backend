@@ -25,7 +25,7 @@ namespace TravelatorService.Services
             try
             {
                 var tripDetails = _mapper.Map<TravelRequest>(details);
-
+                tripDetails.Status = "Requested";
                 return await _tripsRepo.TravelRequest(tripDetails);
             }
             catch (Exception ex)

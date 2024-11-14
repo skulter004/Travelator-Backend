@@ -8,6 +8,7 @@ namespace TravelatorService.DTO_s
 {
     public class TravelRequestDTO
     {
+        public Guid EmployeeId { get; set; }
         public string TravelType { get; set; }
 
         public DateTime StartDate { get; set; }

@@ -18,6 +18,8 @@ builder.Services.AddScoped<ICabsRepo, CabsRepo>();
 builder.Services.AddScoped<ICabsService, CabsService>();
 builder.Services.AddScoped<ITripsRepo, TripsRepo>();
 builder.Services.AddScoped<ITripsService, TripsService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountRepo, AccountRepo>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<TravelatorContext>()
     .AddDefaultTokenProviders();
@@ -34,8 +36,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = "TRavelator",
+        ValidAudience = "TRavelator",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });

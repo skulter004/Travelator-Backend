@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TravelatorDataAccess.EntityModels;
+using TravelatorService.Interfaces;
 
 namespace TravelatorBackend.Controllers
 {
@@ -16,16 +17,19 @@ namespace TravelatorBackend.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IAccountService _accountService;
 
         public AccountController(UserManager<IdentityUser> userManager,
                                  SignInManager<IdentityUser> signInManager,
                                  IConfiguration configuration,
-                                 RoleManager<IdentityRole> roleManager)
+                                 RoleManager<IdentityRole> roleManager,
+                                 IAccountService accountService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _roleManager = roleManager;
+            _accountService = accountService;
         }
 
         [HttpPost("register")]
@@ -33,24 +37,19 @@ namespace TravelatorBackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email
-                };
+                var (succeeded, userId, errors) = await _accountService.RegisterUser(model);
 
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
+                if (succeeded)
                 {
-                    return Ok(new { message = "User registered successfully!" });
+                    return Ok(new { message = "User registered successfully!", userId });
                 }
 
-                return BadRequest(result.Errors);
+                return BadRequest(errors);
             }
 
             return BadRequest(ModelState);
         }
+    
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)

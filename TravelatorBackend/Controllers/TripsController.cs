@@ -1,10 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TravelatorService.DTO_s;
 using TravelatorService.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TravelatorBackend.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class TripsController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -25,10 +30,19 @@ namespace TravelatorBackend.Controllers
             _roleManager = roleManager;
             _tripsService = tripsService;
         }
-
+        [Authorize]
         [HttpPost("requestTravel")]
         public async Task<IActionResult> TravelRequest(TravelRequestDTO details)
         {
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
+            }
+            var employeeId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+
+            details.EmployeeId = new Guid(employeeId);
+
             var success = await _tripsService.TravelRequest(details);
             if (success)
             {
