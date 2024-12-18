@@ -13,6 +13,7 @@ namespace TravelatorDataAccess.EntityModels
         [ForeignKey("Employee")]
         public Guid EmployeeId { get; set; }
         public required string PickUp { get; set; }
+        public required string DropOff { get; set; }
         public DateTime Time {  get; set; }
         public Guid CabId { get; set; }
         public Employee Employee { get; set; }

@@ -34,7 +34,7 @@ namespace TravelatorBackend.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
-        {
+                {
             if (ModelState.IsValid)
             {
                 var (succeeded, userId, errors) = await _accountService.RegisterUser(model);
@@ -79,6 +79,18 @@ namespace TravelatorBackend.Controllers
             return BadRequest(ModelState);
         }
 
+        [HttpGet("profileDetails")]
+        public async Task<IActionResult> GetEmployeeDetails()
+        {
+            var employeeId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            return Ok(new
+            {
+                details = await _accountService.GetEmployeeById(new Guid(employeeId))
+            });
+            
+        }
+
         private string GenerateJwtToken(IdentityUser user)
         {
             var userRoles = _userManager.GetRolesAsync(user).Result;
@@ -89,6 +101,10 @@ namespace TravelatorBackend.Controllers
                                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
                             };
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim("roles", role));
+            }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -97,7 +113,7 @@ namespace TravelatorBackend.Controllers
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Issuer"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.Now.AddHours(1),  
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

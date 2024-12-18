@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TravelatorDataAccess.EntityModels;
 using TravelatorDataAccess.Interfaces;
+using TravelatorDataAccess.Repositories;
 using TravelatorService.DTO_s;
 using TravelatorService.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TravelatorService.Services
 {
@@ -46,6 +49,42 @@ namespace TravelatorService.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing request: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<object> TravelRequests(string status)
+        {
+            try
+            {
+                return await _tripsRepo.TravelRequests(status);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting requests: {ex.Message}");
+                return null;
+            }
+        }
+        public async Task<bool> ApproveRequest(Guid id)
+        {
+            try
+            {
+                return await _tripsRepo.ApproveRequest(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error approving request: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<bool> DirectorApproval(Guid id)
+        {
+            try
+            {
+                return await _tripsRepo.DirectorApproval(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error requesting: {ex.Message}");
                 return false;
             }
         }

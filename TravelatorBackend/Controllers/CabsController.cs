@@ -6,6 +6,7 @@ using TravelatorService.DTO_s;
 using TravelatorService.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace TravelatorBackend.Controllers
 {
@@ -41,19 +42,25 @@ namespace TravelatorBackend.Controllers
             var success = await _cabsService.RequestBooking(booking);
             if (success)
             {
-                return Ok("Booking requested successfully.");
+                return Ok( new
+                {
+                    msg = "Booking requested successfully."
+                });
             }
             return StatusCode(500, "Error requesting booking.");
 
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("approveBooking")]
         public async Task<IActionResult> ApproveBooking(CabBookingDTO bookingDetails)
         {
             var success = await _cabsService.ApproveBooking(bookingDetails);
             if (success)
             {
-                return Ok("Booking approved successfully.");
+                return Ok( new
+                {
+                    msg = "Booking approved successfully."
+                });
             }
             return StatusCode(500, "Error requesting booking.");
         }
@@ -61,7 +68,7 @@ namespace TravelatorBackend.Controllers
         [HttpGet("cabDetails")]
         public async Task<IActionResult> GetCabDetails()
         {
-            var employeeId = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var employeeId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(employeeId))
             {
@@ -71,6 +78,40 @@ namespace TravelatorBackend.Controllers
                 });
             }
             return StatusCode(500, "Error requesting details.");
+        }
+
+        [HttpGet("requests")]
+        public async Task<IActionResult> Requests()
+        {
+                return Ok(new
+                {
+                    details = await _cabsService.Requests()
+                });
+            return StatusCode(500, "Error requesting details.");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("availableCabs")]
+        public async Task<IActionResult> AvailableCabs()
+        {
+            return Ok(new
+            {
+                details = await _cabsService.AvailableCabs()
+            });
+        }
+
+        [HttpGet("myBookings")]
+        public async Task<IActionResult> MyBooking([FromQuery]DateTime date)
+        {
+            var employeeId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (date == null  || date == DateTime.MinValue)
+            {
+                date = DateTime.Now;
+                }
+            return Ok(new
+            {
+                booking = await _cabsService.MyBooking(new Guid(employeeId), date)
+            });
         }
     }
 }

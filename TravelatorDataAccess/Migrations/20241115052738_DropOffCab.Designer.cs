@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelatorDataAccess.Context;
 
@@ -11,9 +12,11 @@ using TravelatorDataAccess.Context;
 namespace TravelatorDataAccess.Migrations
 {
     [DbContext(typeof(TravelatorContext))]
-    partial class TravelatorContextModelSnapshot : ModelSnapshot
+    [Migration("20241115052738_DropOffCab")]
+    partial class DropOffCab
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -362,10 +365,6 @@ namespace TravelatorDataAccess.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Department")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

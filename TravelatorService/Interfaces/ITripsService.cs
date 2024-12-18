@@ -12,5 +12,8 @@ namespace TravelatorService.Interfaces
     {
         Task<bool> TravelRequest(TravelRequestDTO details);
         Task<bool> AddExpense(ExpenseDTO expense);
+        Task<object> TravelRequests(string status);
+        Task<bool> ApproveRequest(Guid id);
+        Task<bool> DirectorApproval(Guid id);
     }
 }

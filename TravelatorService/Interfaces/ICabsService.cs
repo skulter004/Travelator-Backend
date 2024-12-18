@@ -12,5 +12,8 @@ namespace TravelatorService.Interfaces
         Task<bool> RequestBooking(CabBookingDTO booking);
         Task<bool> ApproveBooking(CabBookingDTO booking);
         Task<object> GetCabDetails(Guid EmployeeId);
+        Task<object> Requests();
+        Task<object> AvailableCabs();
+        Task<object> MyBooking(Guid eId, DateTime date);
     }
 }

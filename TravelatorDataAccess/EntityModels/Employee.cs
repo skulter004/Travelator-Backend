@@ -20,6 +20,8 @@ namespace TravelatorDataAccess.EntityModels
 
         public decimal UsedBudget { get; set; }
 
+        public string Email { get; set; }
+
         public ICollection<TravelRequest> TravelRequests { get; set; }
         public ICollection<Approval> Approvals { get; set; }
         public ICollection<Expense> Expenses { get; set; }

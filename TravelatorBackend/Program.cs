@@ -9,10 +9,15 @@ using TravelatorDataAccess.Repositories;
 using TravelatorService.Interfaces;
 using TravelatorService.Services;
 using TravelatorService.Mapper;
+using TravelatorDataAccess.NotificationHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSignalR(); 
+builder.Services.AddSingleton<INotificationPublisher, RabbitMQService>();
+builder.Services.AddHostedService<RabbitMQService>();
+builder.Services.AddScoped<NotificationService>();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddScoped<ICabsRepo, CabsRepo>();
 builder.Services.AddScoped<ICabsService, CabsService>();
@@ -40,6 +45,21 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = "TRavelator",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["id"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/notificationHub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddDbContext<TravelatorContext>(options =>
@@ -50,7 +70,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
-{
+{   
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
@@ -60,6 +80,7 @@ builder.Services.AddCors(options =>
                 .AllowCredentials();
         });
 });
+
 
 var app = builder.Build();
 
@@ -78,6 +99,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.MapHub<NotificationHub>("/notificationHub");
 app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 

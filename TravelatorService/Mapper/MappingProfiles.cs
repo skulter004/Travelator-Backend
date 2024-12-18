@@ -17,6 +17,7 @@ namespace TravelatorService.Mapper
             CreateMap<CabBookingDTO, CabBooking>();
             CreateMap<TravelRequestDTO, TravelRequest>();
             CreateMap<ExpenseDTO, Expense>();
+            CreateMap<Employee, EmployeeDTO>();
         }
     }
 }

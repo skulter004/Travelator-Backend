@@ -52,13 +52,48 @@ namespace TravelatorService.Services
         {
             try
             {
-
                 return await _cabsRepo.GetCabDetails(EmployeeId);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing booking: {ex.Message}");
                 return false;
+            }
+        }
+        public async Task<object> Requests()
+        {
+            try
+            {
+                return await _cabsRepo.Requests();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting requests: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<object> AvailableCabs()
+        {
+            try
+            {
+                return await _cabsRepo.AvailableCabs();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting requests: {ex.Message}");
+                return null;
+            }
+        }
+        public async Task<object> MyBooking(Guid eId, DateTime date)
+        {
+            try
+            {
+                return await _cabsRepo.MyBooking(eId, date);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting requests: {ex.Message}");
+                return null;
             }
         }
     }

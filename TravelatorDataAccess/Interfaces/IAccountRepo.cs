@@ -11,5 +11,6 @@ namespace TravelatorDataAccess.Interfaces
     public interface IAccountRepo
     {
         Task<(bool Succeeded, Guid UserId, IEnumerable<IdentityError> Errors)> RegisterUser(RegisterModel model);
+        Task<Employee> GetEmployeeById(Guid id);
     }
 }

@@ -9,6 +9,7 @@ namespace TravelatorService.DTO_s
     public class CabBookingDTO
     {
         public Guid EmployeeId { get; set; }
+        public Guid CabId { get; set; }
         public string PickUp {  get; set; }
         public string DropOff { get; set; }
         public DateTime Time {  get; set; }

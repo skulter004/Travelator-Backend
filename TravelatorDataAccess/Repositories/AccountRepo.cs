@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,13 +34,15 @@ namespace TravelatorDataAccess.Repositories
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "User");
                 var Employee = new Employee
                 {
                     EmployeeId = new Guid(user.Id),
                     Name = model.Name,
                     Department = "Development",
                     BudgetLimit = 5000,
-                    UsedBudget = 0
+                    UsedBudget = 0,
+                    Email = model.Email,
                 };
                 
                 await _context.Employees.AddAsync(Employee);
@@ -48,6 +51,20 @@ namespace TravelatorDataAccess.Repositories
             }
 
             return (false, Guid.Empty, result.Errors);
+        }
+
+        public async Task<Employee> GetEmployeeById(Guid id)
+        {
+            try
+            {
+                Employee employee = await _context.Employees.Where(e => e.EmployeeId == id).FirstOrDefaultAsync();
+
+                return employee;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }
