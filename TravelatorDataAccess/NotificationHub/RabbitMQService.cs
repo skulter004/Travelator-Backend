@@ -27,9 +27,14 @@ namespace TravelatorDataAccess.NotificationHub
 
             _factory = new ConnectionFactory
             {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "guest"
+                Uri = new Uri("amqps://b-c2ace686-8bad-49fd-9c06-b1bdfb1e32d2.mq.eu-north-1.amazonaws.com:5671"),
+                UserName = "travlatormq",
+                Password = "@skulter0069",
+                Ssl = new SslOption()
+                {
+                    Enabled = true,
+                    ServerName = "b-c2ace686-8bad-49fd-9c06-b1bdfb1e32d2.mq.eu-north-1.amazonaws.com"
+                }
             };
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
