@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using TravelatorDataAccess.Migrations;
 using TravelatorService.DTO_s;
 using TravelatorService.Interfaces;
 using System.IdentityModel.Tokens.Jwt;

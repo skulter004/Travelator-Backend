@@ -63,14 +63,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddDbContext<TravelatorContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-    sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
-        maxRetryCount:5,
-        maxRetryDelay: TimeSpan.FromSeconds(10),
-        errorNumbersToAdd:null
-        )
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 29))
     )
-   );
+);
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

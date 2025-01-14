@@ -1,6 +1,0 @@
-services:
-  travelatorbackend:
-    image: ${DOCKER_REGISTRY-}travelatorbackend
-    build:
-      context: .
-      dockerfile: TravelatorBackend/Dockerfile

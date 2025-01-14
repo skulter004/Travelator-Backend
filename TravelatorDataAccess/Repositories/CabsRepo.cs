@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using TravelatorDataAccess.Context;
 using TravelatorDataAccess.EntityModels;
 using TravelatorDataAccess.Interfaces;
-using TravelatorDataAccess.Migrations;
 using TravelatorDataAccess.NotificationHub;
 
 namespace TravelatorDataAccess.Repositories

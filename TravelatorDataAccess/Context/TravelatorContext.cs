@@ -58,7 +58,24 @@ namespace TravelatorDataAccess.Context
                 .WithMany(tr => tr.Approvals)
                 .HasForeignKey(a => a.RequestId)
                 .OnDelete(DeleteBehavior.Restrict);  // Prevent cascading delete
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.Property(e => e.EmployeeId)
+                      .HasColumnType("char(36)"); // Explicitly map Guid to CHAR(36)
 
+                entity.Property(e => e.Name)
+                      .HasMaxLength(255)
+                      .IsRequired();
+
+                entity.Property(e => e.Email)
+                      .HasMaxLength(255)
+                      .IsRequired();
+
+
+                entity.Property(e => e.Department)
+                      .HasMaxLength(255)
+                      .IsRequired();
+            });
             base.OnModelCreating(modelBuilder);
         }
 
