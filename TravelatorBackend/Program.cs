@@ -79,7 +79,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200")
+            builder.WithOrigins("https://travlator.netlify.app")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -105,7 +105,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapHub<NotificationHub>("/notificationHub");
-app.UseCors("AllowAllOrigins");
+app.UseCors();
 
 app.UseAuthentication(); // Important: Ensure Authentication is before Authorization
 app.UseAuthorization();
