@@ -106,7 +106,6 @@ if (app.Environment.IsDevelopment())
 }
 app.MapHub<NotificationHub>("/notificationHub");
 app.UseCors("AllowAllOrigins");
-app.UseHttpsRedirection();
 
 app.UseAuthentication(); // Important: Ensure Authentication is before Authorization
 app.UseAuthorization();
