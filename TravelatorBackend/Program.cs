@@ -105,9 +105,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.MapHub<NotificationHub>("/notificationHub");
-app.UseCors();
+app.UseCors("AllowAllOrigins");
 
-app.UseAuthentication(); // Important: Ensure Authentication is before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
