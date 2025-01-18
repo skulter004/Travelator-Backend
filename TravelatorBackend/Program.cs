@@ -79,7 +79,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
-            builder.WithOrigins("https://travlator.netlify.app")
+            builder.WithOrigins("https://travlator.netlify.app", "http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
