@@ -114,14 +114,21 @@ namespace TravelatorBackend.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByEmailAsync(model.Email);
-                    try
+                    if (user.EmailConfirmed)
                     {
-                        var token = GenerateJwtToken(user);
-                        return Ok(new { token });
+                        try
+                        {
+                            var token = GenerateJwtToken(user);
+                            return Ok(new { token });
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                        }
                     }
-                    catch (Exception ex) 
+                    else
                     {
-                        Console.WriteLine(ex);
+                        return Ok(new{emailVerified=false});
                     }
                    
                 }
