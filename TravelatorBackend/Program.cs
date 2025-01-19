@@ -13,8 +13,18 @@ using TravelatorDataAccess.NotificationHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddSignalR(); 
+// Load environment variables
+var jwtKey = Environment.GetEnvironmentVariable("Jwt_Key");
+var dbConnectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+var brevoApiKey = Environment.GetEnvironmentVariable("Brevo_ApiKey");
+
+if (string.IsNullOrEmpty(jwtKey) || string.IsNullOrEmpty(dbConnectionString))
+{
+    throw new Exception("Critical environment variables are missing. Check your configuration.");
+}
+
+// Add services to the container
+builder.Services.AddSignalR();
 builder.Services.AddSingleton<INotificationPublisher, RabbitMQService>();
 builder.Services.AddHostedService<RabbitMQService>();
 builder.Services.AddScoped<NotificationService>();
@@ -24,7 +34,7 @@ builder.Services.AddScoped<ICabsService, CabsService>();
 builder.Services.AddScoped<ITripsRepo, TripsRepo>();
 builder.Services.AddScoped<ITripsService, TripsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailService>(sp => new EmailService(brevoApiKey)); // Pass API key to EmailService
 builder.Services.AddScoped<IAccountRepo, AccountRepo>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<TravelatorContext>()
@@ -44,7 +54,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "TRavelator",
         ValidAudience = "TRavelator",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)) // Use environment variable
     };
     options.Events = new JwtBearerEvents
     {
@@ -65,18 +75,17 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddDbContext<TravelatorContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        dbConnectionString, // Use environment variable
         new MySqlServerVersion(new Version(8, 0, 29))
     )
 );
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
-{   
+{
     options.AddPolicy("AllowAllOrigins",
         builder =>
         {
@@ -86,7 +95,6 @@ builder.Services.AddCors(options =>
                 .AllowCredentials();
         });
 });
-
 
 var app = builder.Build();
 
