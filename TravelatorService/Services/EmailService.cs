@@ -24,7 +24,7 @@ namespace TravelatorService.Services
         }
         public async System.Threading.Tasks.Task sendVerificationAsync(string toName, string toEmail, string verificationUrl)
         {
-            Configuration.Default.AddApiKey("api-key", "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");
+            Configuration.Default.AddApiKey("api-key", _apiKey);
 
             var apiInstance = new TransactionalEmailsApi();
             string SenderName = "Travlator";
