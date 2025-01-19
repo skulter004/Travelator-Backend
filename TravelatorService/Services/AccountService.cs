@@ -21,9 +21,9 @@ namespace TravelatorService.Services
             _accountRepo = accountRepo;
             _mapper = mapper;
         }
-        public async Task<(bool Succeeded, Guid UserId, IEnumerable<IdentityError> Errors)> RegisterUser(RegisterModel model)
+        public async Task<bool> RegisterUser(RegisterModel model, string userId)
         {
-            return await _accountRepo.RegisterUser(model);
+            return await _accountRepo.RegisterUser(model, userId);
         }
         public async Task<EmployeeDTO> GetEmployeeById(Guid id)
         {

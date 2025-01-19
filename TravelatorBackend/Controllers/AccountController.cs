@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using TravelatorDataAccess.EntityModels;
 using TravelatorService.Interfaces;
+using TravelatorService.Services;
 
 namespace TravelatorBackend.Controllers
 {
@@ -19,33 +20,84 @@ namespace TravelatorBackend.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
         private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
 
         public AccountController(UserManager<IdentityUser> userManager,
                                  SignInManager<IdentityUser> signInManager,
                                  IConfiguration configuration,
                                  RoleManager<IdentityRole> roleManager,
-                                 IAccountService accountService)
+                                 IAccountService accountService,
+                                 IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _roleManager = roleManager;
             _accountService = accountService;
+            _emailService = emailService;
         }
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string name, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+                return BadRequest("Invalid email confirmation request.");
 
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found."); 
+
+            if (user.EmailConfirmed)
+                return BadRequest("Email already verified.");
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (!result.Succeeded)
+                return BadRequest("Email confirmation failed.");
+
+
+            RegisterModel model = new RegisterModel
+            {
+                Email = user.Email,
+                Name = name
+            };
+
+            if (model != null)
+            {
+                await _accountService.RegisterUser(model, userId);
+            }
+            return Ok( new
+            {
+                msg="Email verified successfully! You can now log in."
+            });
+        }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
                 {
-            if (ModelState.IsValid)
+                if (ModelState.IsValid)
             {
-                var (succeeded, userId, errors) = await _accountService.RegisterUser(model);
-
-                if (succeeded)
+                var user = new IdentityUser
                 {
-                    return Ok(new { message = "User registered successfully!", userId });
+                    UserName = model.Email,
+                    Email = model.Email,
+                    EmailConfirmed = false
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                await _userManager.AddToRoleAsync(user, "User");
+                var newUser = await _userManager.FindByEmailAsync(model.Email);
+                if (result.Succeeded)
+                {
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var encodedToken = Uri.EscapeDataString(token);
+                    var verificationUrl = $"https://travlator.netlify.app/auth/verify-email?token={encodedToken}&name={Uri.EscapeDataString(model.Name)}&userId={user.Id}";
+                    await _emailService.sendVerificationAsync(model.Name, model.Email, verificationUrl);
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(result);
                 }
 
-                return BadRequest(errors);
             }
 
             return BadRequest(ModelState);

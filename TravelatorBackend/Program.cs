@@ -24,6 +24,7 @@ builder.Services.AddScoped<ICabsService, CabsService>();
 builder.Services.AddScoped<ITripsRepo, TripsRepo>();
 builder.Services.AddScoped<ITripsService, TripsService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IAccountRepo, AccountRepo>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<TravelatorContext>()

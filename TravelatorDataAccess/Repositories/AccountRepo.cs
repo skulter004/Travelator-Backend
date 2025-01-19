@@ -22,35 +22,30 @@ namespace TravelatorDataAccess.Repositories
             _context = context;
         }
 
-        public async Task<(bool Succeeded, Guid UserId, IEnumerable<IdentityError> Errors)> RegisterUser(RegisterModel model)
+        public async Task<bool> RegisterUser(RegisterModel model, string userId)
         {
-            var user = new IdentityUser
+            try
             {
-                UserName = model.Email,
-                Email = model.Email,
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
                 var Employee = new Employee
                 {
-                    EmployeeId = new Guid(user.Id),
+                    EmployeeId = new Guid(userId),
                     Name = model.Name,
                     Department = "Development",
                     BudgetLimit = 5000,
                     UsedBudget = 0,
                     Email = model.Email,
                 };
-                
+
                 await _context.Employees.AddAsync(Employee);
                 await _context.SaveChangesAsync();
-                return (true, Employee.EmployeeId, null);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
 
-            return (false, Guid.Empty, result.Errors);
+
         }
 
         public async Task<Employee> GetEmployeeById(Guid id)

@@ -10,7 +10,7 @@ namespace TravelatorDataAccess.Interfaces
 {
     public interface IAccountRepo
     {
-        Task<(bool Succeeded, Guid UserId, IEnumerable<IdentityError> Errors)> RegisterUser(RegisterModel model);
+        Task<bool> RegisterUser(RegisterModel model, string userId);
         Task<Employee> GetEmployeeById(Guid id);
     }
 }

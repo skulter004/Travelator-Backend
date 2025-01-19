@@ -11,7 +11,7 @@ namespace TravelatorService.Interfaces
 {
     public interface IAccountService
     {
-        Task<(bool Succeeded, Guid UserId, IEnumerable<IdentityError> Errors)> RegisterUser(RegisterModel model);
+        Task<bool> RegisterUser(RegisterModel model, string userId);
         Task<EmployeeDTO> GetEmployeeById(Guid id);
     }
 }
