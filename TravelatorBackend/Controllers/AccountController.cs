@@ -76,6 +76,11 @@ namespace TravelatorBackend.Controllers
                 {
                 if (ModelState.IsValid)
             {
+                var userExist = await _userManager.FindByEmailAsync(model.Email);
+                if (userExist != null)
+                {
+                    return BadRequest("Email resgitered with another account");
+                }
                 var user = new IdentityUser
                 {
                     UserName = model.Email,
@@ -114,6 +119,10 @@ namespace TravelatorBackend.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByEmailAsync(model.Email);
+                    if(user == null)
+                    {
+                        return BadRequest("Email not registerd");
+                    }
                     if (user.EmailConfirmed)
                     {
                         try
